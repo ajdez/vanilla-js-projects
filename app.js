@@ -39,3 +39,25 @@ function getCurrentWeather (coords){
     .then(data => data.currently)
   )
 }
+
+//////////////////////////// functions on top/////////////////////////
+
+var app = document.querySelector("#app");
+var cityForm = document.querySelector(".city-form");
+var cityInput = document.querySelector(".city-input");
+var weatherButton = document.querySelector(".get-weather-button");
+var cityWeather = document.querySelector(".city-weather");
+
+
+cityForm.addEventListener('submit', function(e){
+  var city = cityInput.value;
+  e.preventDefault();
+
+
+  getCoordinatesForCity(city)
+  .then(getCurrentWeather)
+  .then(function(weather){
+    console.log("EEEERRRFF")
+    cityWeather.innerText = 'the current weather is : ' + weather.temperature;
+  })
+});
