@@ -59,7 +59,6 @@
     getCoordinatesForCity(city)
     .then(getCurrentWeather)
     .then(function(weather){
-      console.log("EEEERRRFF")
       cityWeather.innerText = "";
       cityWeather.innerText = 'the current weather is : ' + weather.temperature;
     })
