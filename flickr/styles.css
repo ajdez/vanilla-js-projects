@@ -1,0 +1,29 @@
+body{
+  background-color: rgb(225, 250, 225);
+}
+
+#app>h1{
+  color: rgb(125, 125, 100);
+  font-style: italic;
+  font-family: cursive;
+  font-weight: bold;
+  text-align:center;
+}
+.search-form{
+  display:flex;
+  justify-content: center;
+  margin-bottom: 2em;
+}
+.search-input{
+  border-radius: 10px;
+  padding: 0.5em;
+}
+
+.search-button{
+  border-radius: 50%;
+  background: rgb(250, 236, 205);
+  color: rgb(250, 50, 50);
+  padding: 0.7em;
+  font-weight: bold;
+  margin-left: 2em;
+}
