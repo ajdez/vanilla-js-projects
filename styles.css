@@ -1,3 +1,41 @@
-.red{
-  color:red;
+body{
+  background-image: url('http://ckom.com/sites/default/files/styles/article_lead_image/public/contest/weather.jpg?itok=BjOZlxOB');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+
+#app{
+  margin: 10em 30%;
+}
+
+#app > h1{
+  color: rgb(13, 10, 104);
+  font-family: monospace;
+  font-weight: 600;
+  font-size: 3em;
+}
+
+.city-form{
+  display:flex;
+}
+
+.city-input{
+  border-radius: 15px;
+  font-size: 1.1rem;
+}
+
+.get-weather-button{
+  color: white;
+  font-size: 1.3em;
+  background-color: rgb(13, 20, 104);
+  border-radius: 10px;
+  border-color: black;
+  margin-left: 8px;
+}
+
+.city-weather{
+  margin-top: 10px;
+  font-size: 1.2em;
+  color: black;
 }
