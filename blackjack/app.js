@@ -54,6 +54,7 @@ function getNewDeck() {
     5) Hide the hit-me and stay buttons by changing their style.display to "none"
     6) Catch any errors that may occur on the fetch and log them */
     resetPlayingArea();
+
     fetch('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=6')
         .then(response => response.json())
         .then(function(data) {
@@ -115,10 +116,13 @@ function newHand() {
     fetch(url)
         .then(response => response.json())
         .then(function(data) {
+            hitMeNode.style.display = "block";
+            stayNode.style.display = "block";
             playerCards.push(data.cards[0], data.cards[1]);
             dealerCards.push(data.cards[2], data.cards[3]);
             dealerScore = "?";
             dealerScoreNode.textContent = dealerScore;
+
             playerCards.forEach(function(cardObj) {
                 var card = document.createElement('img');
                 card.setAttribute('src', cardObj.image);
@@ -129,6 +133,7 @@ function newHand() {
                 card.setAttribute('src', cardObj.image);
                 dealerCardsNode.appendChild(card);
             })
+
             if (computeScore(playerCards) == 21) {
                 roundWon = true;
                 announcementNode.textContent = "BLACKJACK, you win!!";
@@ -149,60 +154,95 @@ function resetPlayingArea() {
 
     //Reset state variables
     // deckID = "";
-    // dealerCards = [];
-    // playerCards = [];
-    // playerScore = 0;
-    // dealerScore = 0;
-    // roundLost = false;
-    // roundWon = false;
-    // roundTied = false;
-    //
-    // dealerScoreNode.textContent = "";
-    // playerScoreNode.textContent = "";
-    // announcementNode.textContent = "";
+    dealerCards = [];
+    playerCards = [];
+    playerScore = 0;
+    dealerScore = 0;
+    roundLost = false;
+    roundWon = false;
+    roundTied = false;
 
+    dealerScoreNode.textContent = "";
+    playerScoreNode.textContent = "";
+    announcementNode.textContent = "";
+
+    while (playerCardsNode.firstChild) {
+        playerCardsNode.removeChild(playerCardsNode.firstChild);
+    }
+    while (dealerCardsNode.firstChild) {
+        dealerCardsNode.removeChild(dealerCardsNode.firstChild);
+    }
 
 }
 
 
-    function hitMe(target) {
-        /* This function needs to:
-        1) If any of roundLost or roundWon or roundTied is true, return immediately.
-        2) Using the same deckID, fetch to draw 1 card
-        3) Depending on wether target is 'player' or 'dealer', push the card to the
-        appropriate state array (playerCards or dealerCards).
-        4) Create an <img> and set it's src to the card image and append it to the
-        appropriate DOM element for it to appear on the game play UI.
-        5) If target === 'player', compute score and immediately announce loss if
-        score > 21 by setting:
-        roundLost = true;
-        and updating announcementNode to display a message delivering the bad news.
-        6) If target === 'dealer', just call the dealerPlays() function immediately
-        after having appended the <img> to the game play UI.
-        7) Catch error and log....
-        */
-    }
+function hitMe(target) {
+    /* This function needs to:
+    1) If any of roundLost or roundWon or roundTied is true, return immediately.
+    2) Using the same deckID, fetch to draw 1 card
+    3) Depending on wether target is 'player' or 'dealer', push the card to the
+    appropriate state array (playerCards or dealerCards).
+    4) Create an <img> and set it's src to the card image and append it to the
+    appropriate DOM element for it to appear on the game play UI.
+    5) If target === 'player', compute score and immediately announce loss if
+    score > 21 by setting:
+    roundLost = true;
+    and updating announcementNode to display a message delivering the bad news.
+    6) If target === 'dealer', just call the dealerPlays() function immediately
+    after having appended the <img> to the game play UI.
+    7) Catch error and log....
+    */
 
-    function dealerPlays() {
-        /* This function needs to:
-        1) If any of roundLost or roundWon or roundTied is true, return immediately.
-        2) Compute the dealer's score by calling the computeScore() function and
-        update the UI to reflect this.
-        */
-        if (dealerScore < 17) {
-            // a delay here makes for nicer game play because of suspence.
-            setTimeout(() => hitMe('dealer'), 900)
-        } else if (dealerScore > 21) {
-            roundWon = true;
-            // ... Update the UI to reflect this...
-        } else if (dealerScore > playerScore) {
-            roundLost = true;
-            // ... Update the UI to reflect this...
-        } else if (dealerScore === playerScore) {
-            roundTied = true;
-            // ... Update the UI to reflect this...
-        } else {
-            roundWon = true;
-            // ... Update the UI to reflect this...
-        }
+    if (roundLost === true || roundWon === true || roundTied === true) {
+        return;
     }
+    fetch(`https://deckofcardsapi.com/api/deck/${deckID}/draw/?count=1`)
+        .then(response => response.json())
+        .then(function(data) {
+            if (target === 'player') {
+                playerCards.push(data.cards[0]);
+
+                var card = document.createElement('img');
+                card.setAttribute('src', data.cards[0].image);
+                playerCardsNode.appendChild(card);
+
+                if(computeScore(playerCards) > 21){
+                  roundLost = true;
+                  announcementNode.textContent = "Sorry you lost!";
+                }
+
+            } else {
+                dealerCards.push(data.cards[0]);
+
+                var card = document.createElement('img');
+                card.setAttribute('src', data.cards[0].image);
+                dealerCardsNode.appendChild(card);
+
+                }
+
+        })
+}
+
+function dealerPlays() {
+    /* This function needs to:
+    1) If any of roundLost or roundWon or roundTied is true, return immediately.
+    2) Compute the dealer's score by calling the computeScore() function and
+    update the UI to reflect this.
+    */
+    if (dealerScore < 17) {
+        // a delay here makes for nicer game play because of suspence.
+        setTimeout(() => hitMe('dealer'), 900)
+    } else if (dealerScore > 21) {
+        roundWon = true;
+        // ... Update the UI to reflect this...
+    } else if (dealerScore > playerScore) {
+        roundLost = true;
+        // ... Update the UI to reflect this...
+    } else if (dealerScore === playerScore) {
+        roundTied = true;
+        // ... Update the UI to reflect this...
+    } else {
+        roundWon = true;
+        // ... Update the UI to reflect this...
+    }
+}
